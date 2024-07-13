@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPI RF SYNTHESIZER</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5; /* Light background color */
+        }
+        .header {
+            background-color: #007bff; /* Updated to a brighter color */
+            color: white;
+            padding: 20px 0; /* Increased padding for better spacing */
+            text-align: center;
+            font-size: 24px; /* Increased font size for header */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
+        }
+        .container-fluid {
+            display: flex;
+            flex-direction: row;
+            padding: 20px;
+            height: calc(100% - 80px); /* Adjusted for increased header height */
+        }
+        .section {
+            flex: 1;
+            padding: 20px;
+            background-color: white; /* White background for sections */
+            border: 1px solid #e0e0e0;
+            border-radius: 10px; /* More rounded corners */
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
+            overflow: auto; /* Allow scrolling within sections */
+        }
+        .input-parameters h5, .output-section h5 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            margin-top: 0;
+            color: #007bff; /* Matching header color */
+        }
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap */
+            justify-content: space-between;
+        }
+        .form-group, .form-check {
+            flex: 1 1 calc(50% - 10px); /* Ensure the items take up half the width minus margin */
+            margin: 5px;
+        }
+        .lock-button {
+            width: 60px; /* Increased size */
+            height: 60px; /* Increased size */
+            background-color: #f44336; /* Initially red */
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            align-self: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+        }
+        .lock-text {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 18px; /* Increased font size */
+            color: #333; /* Darker text color */
+        }
+        .message-text, .procedure-heading {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 16px; /* Increased font size */
+            color: #333; /* Darker text color */
+        }
+        .message-display, .procedure {
+            border: 1px solid #ccc;
+            padding: 15px; /* Increased padding */
+            background-color: #f9f9f9;
+            margin: 0 20px;
+            border-radius: 5px; /* Rounded corners */
+        }
+        .procedure {
+            flex-grow: 1;
+        }
+        .message-display {
+            height: 100px;
+            resize: none;
+            cursor: not-allowed;
+        }
+        .rf-toggle {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px; /* Added vertical spacing */
+        }
+        .toggle-button {
+            padding: 15px 30px; /* Increased padding for larger button */
+            border: none;
+            background-color: #f44336; /* Initially red */
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s; /* Smooth transition for color change */
+        }
+        .toggle-button.on {
+            background-color: #4CAF50; /* Green when on */
+        }
+        .toggle-button.off {
+            background-color: #f44336; /* Red when off */
+        }
+        .form-check-input {
+            width: 1.5em; /* Increase checkbox size */
+            height: 1.5em; /* Increase checkbox size */
+        }
+        .form-check-label {
+            margin-left: 0.5em;
+        }
+        .frequency-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .frequency-inputs .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .frequency-inputs .form-group:last-child {
+            margin-right: 0;
+        }
+    </style>
+    <script>
+        let sweepInterval;
+        let lockCheckInterval;
+
+        function toggleFrequencyInputs() {
+            const frequencyType = document.getElementById('frequencyType').value;
+            const singleFrequencyInputs = document.getElementById('singleFrequencyInputs');
+            const frequencySweepInputs = document.getElementById('frequencySweepInputs');
+            
+            if (frequencyType === 'Single Frequency') {
+                singleFrequencyInputs.style.display = 'flex';
+                frequencySweepInputs.style.display = 'none';
+            } else {
+                singleFrequencyInputs.style.display = 'none';
+                frequencySweepInputs.style.display = 'flex';
+            }
+        }
+
+        function disableInputParamsElements(disable) {
+            const inputs = document.querySelectorAll('.input-section input, .input-section select');
+            inputs.forEach(input => {
+                input.disabled = disable;
+            });
+        }
+
+        function toggleRF(button) {
+            const lockButton = document.querySelector('.lock-button');
+            const messagebox = document.getElementById('messagebox');
+            const frequencyType = document.getElementById('frequencyType').value;
+
+            if (button.classList.contains('on')) {
+                button.classList.remove('on');
+                button.classList.add('off');
+                button.textContent = 'RF OFF';
+                disableInputParamsElements(false);
+                messagebox.textContent = "RF output frequency turned OFF!";
+                lockButton.style.backgroundColor = '#f44336'; /* Red when off */
+                if (sweepInterval) {
+                    clearInterval(sweepInterval);
+                }
+                if (lockCheckInterval) {
+                    clearInterval(lockCheckInterval);
+                }
+                clearOutputFrequency(); // Call the function to turn off RF frequency
+            } else {
+                button.classList.remove('off');
+                button.classList.add('on');
+                button.textContent = 'RF ON';
+                disableInputParamsElements(true);
+                lockButton.style.backgroundColor = '#4CAF50'; /* Green when on */
+
+                if (frequencyType === 'Frequency Sweep') {
+                    startFrequencySweep();
+                } else {
+                    const outputFrequency = document.getElementById('outputFrequency').value;
+                    setOutputFrequency(outputFrequency);
+                }
+
+                lockCheckInterval = setInterval(checkLockStatus, 3000); // Start checking lock status every 3 seconds
+            }
+        }
+
+        function clearOutputFrequency() {
+            fetch('/clear_frequency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagebox = document.getElementById('messagebox');
+                if (data.status === 'success') {
+                    messagebox.textContent = "RF output frequency cleared.";
+                } else {
+                    messagebox.textContent = "Error: " + data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function checkLockStatus() {
+            fetch('/check_lock_status', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const lockButton = document.querySelector('.lock-button');
+                if (data.locked) {
+                    lockButton.style.backgroundColor = '#4CAF50'; // Green when locked
+                } else {
+                    lockButton.style.backgroundColor = '#f44336'; // Red when not locked
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function startFrequencySweep() {
+            const minFrequency = parseInt(document.getElementById('minFrequency').value);
+            const maxFrequency = parseInt(document.getElementById('maxFrequency').value);
+            const stepSize = parseInt(document.getElementById('stepSize').value);
+            const messagebox = document.getElementById('messagebox');
+            let currentFrequency = minFrequency;
+
+            messagebox.textContent = "RF output frequency " + currentFrequency + " MHz generated...";
+
+            sweepInterval = setInterval(() => {
+                currentFrequency += stepSize;
+                if (currentFrequency > maxFrequency) {
+                    currentFrequency = minFrequency;
+                }
+                setOutputFrequency(currentFrequency);
+            }, 5000);
+        }
+
+        function setOutputFrequency(frequency) {
+            console.log('Setting output frequency to:', frequency); // Debugging log
+            fetch('/set_frequency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ outputFrequency: frequency })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagebox = document.getElementById('messagebox');
+                if (data.status === 'success') {
+                    messagebox.textContent = "RF output frequency " + frequency + " MHz generated...";
+                } else {
+                    messagebox.textContent = "Error: " + data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>RPI RF SYNTHESIZER</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="input-section section">
+            <div class="input-parameters">
+                <h5>Input Parameters</h5>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label for="refFrequency">Reference Frequency (MHz)</label>
+                        <input type="text" class="form-control" id="refFrequency" value="{{ ref_frequency }}" readonly>
+                    </div>
+                    <div class="form-group" style="flex: 0;">
+                        <label for="doubler">Doubler</label>
+                        <input type="checkbox" class="form-control" id="doubler">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="frequencyType">Frequency Type</label>
+                    <select class="form-control" id="frequencyType" onchange="toggleFrequencyInputs()">
+                        <option>Single Frequency</option>
+                        <option>Frequency Sweep</option>
+                    </select>
+                </div>
+                <div id="singleFrequencyInputs" class="flex-row">
+                    <div class="form-group">
+                        <label for="outputFrequency">Output Frequency (MHz)</label>
+                        <input type="number" class="form-control" id="outputFrequency" name="outputFrequency" min="62" max="32000" value="1000">
+                    </div>
+                </div>
+                <div id="frequencySweepInputs" class="frequency-inputs" style="display: none;">
+                    <div class="form-group">
+                        <label for="minFrequency">Min Frequency (MHz)</label>
+                        <input type="number" class="form-control" id="minFrequency" name="minFrequency" min="62" max="32000" value="4000">
+                    </div>
+                    <div class="form-group">
+                        <label for="maxFrequency">Max Frequency (MHz)</label>
+                        <input type="number" class="form-control" id="maxFrequency" name="maxFrequency" min="62" max="32000" value="7000">
+                    </div>
+                    <div class="form-group">
+                        <label for="stepSize">Step Size (MHz)</label>
+                        <input type="number" class="form-control" id="stepSize" value="100">
+                    </div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label for="filter">Filter</label>
+                        <input type="number" class="form-control" id="filter" name="filter" min="0" max="7" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="bias">Bias</label>
+                        <input type="number" class="form-control" id="bias" name="bias" min="0" max="3" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="chargePump">Charge Pump Current (μA)</label>
+                    <select class="form-control" id="chargePump">
+                        <option value="350" {% if charge_pump_current == '350' %}selected{% endif %}>350</option>
+                        <option value="700" {% if charge_pump_current == '700' %}selected{% endif %}>700</option>
+                        <option value="1050" {% if charge_pump_current == '1050' %}selected{% endif %}>1050</option>
+                        <option value="1400" {% if charge_pump_current == '1400' %}selected{% endif %}>1400</option>
+                        <option value="1750" {% if charge_pump_current == '1750' %}selected{% endif %}>1750</option>
+                        <option value="2100" {% if charge_pump_current == '2100' %}selected{% endif %}>2100</option>
+                        <option value="2450" {% if charge_pump_current == '2450' %}selected{% endif %}>2450</option>
+                        <option value="2800" {% if charge_pump_current == '2800' %}selected{% endif %}>2800</option>
+                        <option value="3150" {% if charge_pump_current == '3150' %}selected{% endif %}>3150</option>
+                        <option value="3500" {% if charge_pump_current == '3500' %}selected{% endif %}>3500</option>
+                        <option value="3850" {% if charge_pump_current == '3850' %}selected{% endif %}>3850</option>
+                        <option value="4200" {% if charge_pump_current == '4200' %}selected{% endif %}>4200</option>
+                        <option value="4550" {% if charge_pump_current == '4550' %}selected{% endif %}>4550</option>
+                        <option value="4900" {% if charge_pump_current == '4900' %}selected{% endif %}>4900</option>
+                        <option value="5250" {% if charge_pump_current == '5250' %}selected{% endif %}>5250</option>
+                        <option value="5600" {% if charge_pump_current == '5600' %}selected{% endif %}>5600</option>
+                    </select>
+                </div>
+                <div class="rf-toggle">
+                    <button class="toggle-button off" onclick="toggleRF(this)">RF OFF</button>
+                </div>
+            </div>
+        </div>
+        <div class="output-section section">
+            <h5>Output</h5>
+            <div class="lock-text">LOCK</div>
+            <button class="lock-button"></button>
+            <div class="message-text">Message</div>
+            <textarea class="message-display" id="messagebox" readonly></textarea>
+            <div class="procedure-heading" style="margin-top: 20px;">Procedure</div>
+            <div class="procedure" style="margin-bottom: 50px;"></div>
+        </div>
+    </div>
+</body>
+</html>
