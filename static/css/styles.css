@@ -122,7 +122,7 @@ body {
     gap: 5px;
 }
 
-.hwdetect-green-circle {
+.hwdetect-circle {
     width: 20px;
     height: 20px;
     background-color: green;
@@ -130,10 +130,10 @@ body {
     margin-left: 10px;
 }
 
-.lock-green-circle {
+.lock-circle {
     width: 20px;
     height: 20px;
-    background-color: green;
+    background-color: red;
     border-radius: 50%;
     margin-left: 10px;
 }
