@@ -1,17 +1,43 @@
 let sweepInterval;
 let lockCheckInterval;
 
+window.onload = function() {
+    toggleFrequencyInputs();
+}
+
+function disableCWFrequencySection(disable) {
+    var div = document.getElementById('cwfreqdiv');
+    var elements = div.querySelectorAll('*');
+    elements.forEach(function(element) {
+        element.disabled = disable;
+    });
+}
+
+function disableSweepFrequencySection(disable) {
+    var div = document.getElementById('sweepfreqdiv');
+    var elements = div.querySelectorAll('*');
+    elements.forEach(function(element) {
+        element.disabled = disable;
+    });
+}
+
+function otherParamsSection(disable) {
+    var div = document.getElementById('otherparamsdiv');
+    var elements = div.querySelectorAll('*');
+    elements.forEach(function(element) {
+        element.disabled = disable;
+    });
+}
+
 function toggleFrequencyInputs() {
     const frequencyType = document.getElementById('frequencyType').value;
-    const singleFrequencyInputs = document.getElementById('singleFrequencyInputs');
-    const frequencySweepInputs = document.getElementById('frequencySweepInputs');
-    
-    if (frequencyType === 'Single Frequency') {
-        singleFrequencyInputs.style.display = 'flex';
-        frequencySweepInputs.style.display = 'none';
+  
+    if (frequencyType === 'CW Frequency') {
+        disableCWFrequencySection(false);
+        disableSweepFrequencySection(true);
     } else {
-        singleFrequencyInputs.style.display = 'none';
-        frequencySweepInputs.style.display = 'flex';
+        disableCWFrequencySection(true);
+        disableSweepFrequencySection(false);
     }
 }
 
@@ -23,12 +49,13 @@ function disableInputParamsElements(disable) {
 }
 
 function toggleRF(button) {
-    const lockButton = document.querySelector('.lock-button');
     const messagebox = document.getElementById('messagebox');
     const frequencyType = document.getElementById('frequencyType').value;
 
     if (!button) {
-        disableInputParamsElements(false);
+        disableCWFrequencySection(false);
+        disableSweepFrequencySection(false);
+        otherParamsSection(false);
         messagebox.textContent = "RF output frequency turned OFF!";
         if (sweepInterval) {
             clearInterval(sweepInterval);
@@ -36,18 +63,21 @@ function toggleRF(button) {
         if (lockCheckInterval) {
             clearInterval(lockCheckInterval);
         }
-        //clearOutputFrequency();
+        clearOutputFrequency();
     } else {
-        disableInputParamsElements(true);
+        disableCWFrequencySection(true);
+        disableSweepFrequencySection(true);
+        otherParamsSection(true);
 
-        if (frequencyType === 'Frequency Sweep') {
+        if (frequencyType == 'Frequency Sweep') {
             startFrequencySweep();
         } else {
             const outputFrequency = document.getElementById('outputFrequency').value;
             setOutputFrequency(outputFrequency);
         }
 
-        lockCheckInterval = setInterval(checkLockStatus, 3000); // Start checking lock status every 3 seconds
+        checkLockStatus();
+        lockCheckInterval = setInterval(checkLockStatus, 3000);
     }
 }
 
@@ -78,11 +108,11 @@ function checkLockStatus() {
     })
     .then(response => response.json())
     .then(data => {
-        const lockButton = document.querySelector('.lock-button');
+        const lockCircle = document.querySelector('.lock-green-circle');
         if (data.locked) {
-            lockButton.style.backgroundColor = '#4CAF50'; // Green when locked
+            lockCircle.style.backgroundColor = '#4CAF50'; // Green when locked
         } else {
-            lockButton.style.backgroundColor = '#f44336'; // Red when not locked
+            lockCircle.style.backgroundColor = '#f44336'; // Red when not locked
         }
     })
     .catch(error => {
@@ -94,6 +124,7 @@ function startFrequencySweep() {
     const minFrequency = parseInt(document.getElementById('minFrequency').value);
     const maxFrequency = parseInt(document.getElementById('maxFrequency').value);
     const stepSize = parseInt(document.getElementById('stepSize').value);
+    const sweepTime = parseInt(document.getElementById('sweepTime').value);
     const messagebox = document.getElementById('messagebox');
     let currentFrequency = minFrequency;
 
@@ -104,12 +135,12 @@ function startFrequencySweep() {
         if (currentFrequency > maxFrequency) {
             currentFrequency = minFrequency;
         }
-        //setOutputFrequency(currentFrequency);
-    }, 5000);
+        setOutputFrequency(currentFrequency);
+    }, sweepTime);
 }
 
 function setOutputFrequency(frequency) {
-    console.log('Setting output frequency to:', frequency); // Debugging log
+    console.log('Setting output frequency to:', frequency);
     fetch('/set_frequency', {
         method: 'POST',
         headers: {
