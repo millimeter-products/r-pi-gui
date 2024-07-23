@@ -42,7 +42,7 @@ do_install_virtualenv()
 	# Install Flask
 	echo "Installing Flask..."
 	pip install flask
-	pip install flask
+	pip install RPi.GPIO
 	
 	# create systemd service file
 	do_create_systemd_service_file
