@@ -30,7 +30,6 @@ WantedBy=multi-user.target
 EOF"
 }
 
-
 # setup the python3 virtualenv
 do_install_virtualenv()
 {
@@ -68,6 +67,9 @@ do_install_virtualenv()
 }
 
 # Start of the script
+sudo apt update
+sudo apt upgrade
+
 if [ -d "${HOME}/MiWaveRFSynthensizer" ]
 then
 	echo "Removing existing installtion..."
@@ -80,7 +82,7 @@ if [ -d ./webapp ]
 then
 	cp -r ./webapp ${HOME}/MiWaveRFSynthensizer/
 else
-	echo "Failed to install MiWave's synthensizer appliction!!!"
+	echo "Failed to install MiWave's synthensizer application!!!"
 	exit -1
 fi
 
