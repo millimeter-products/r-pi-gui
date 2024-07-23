@@ -24,4 +24,5 @@ Step-3: Reboot the board, if the installation was success
 ```
 
 Now you can access RF synthesizer web application with the URL below.
+
 http://**ip address of the board**:5000
