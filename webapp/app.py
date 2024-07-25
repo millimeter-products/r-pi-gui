@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import os
 
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(9, GPIO.IN)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(9, GPIO.IN)
 
 def read_reference_frequency():
     try:
@@ -81,7 +81,7 @@ def clear_frequency():
 def check_lock_status():
     try:
         lock_status = 0
-        #GPIO.input(9)
+        GPIO.input(9)
         return jsonify(locked=(lock_status == GPIO.HIGH))
     except Exception as e:
         return jsonify(status='error', message=str(e))

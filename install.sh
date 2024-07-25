@@ -67,8 +67,8 @@ do_install_virtualenv()
 }
 
 # Start of the script
-sudo apt update
-sudo apt upgrade
+sudo apt update -y
+sudo apt upgrade -y
 
 if [ -d "${HOME}/MiWaveRFSynthensizer" ]
 then
