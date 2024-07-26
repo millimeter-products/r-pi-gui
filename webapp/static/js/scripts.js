@@ -3,6 +3,7 @@ let lockCheckInterval;
 
 window.onload = function() {
     toggleFrequencyInputs();
+    loadConfig();
 }
 
 function disableCWFrequencySection(disable) {
@@ -31,7 +32,7 @@ function otherParamsSection(disable) {
 
 function toggleFrequencyInputs() {
     const frequencyType = document.getElementById('frequencyType').value;
-  
+
     if (frequencyType === 'CW Frequency') {
         disableCWFrequencySection(false);
         disableSweepFrequencySection(true);
@@ -79,6 +80,8 @@ function toggleRF(button) {
         checkLockStatus();
         lockCheckInterval = setInterval(checkLockStatus, 3000);
     }
+
+    saveConfig();
 }
 
 function clearOutputFrequency() {
@@ -175,3 +178,66 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function saveConfig() {
+    const config = {
+        refFrequency: document.getElementById('refFrequency').value,
+        doubler: document.getElementById('doubler').checked,
+        frequencyType: document.getElementById('frequencyType').value,
+        outputFrequency: document.getElementById('outputFrequency').value,
+        minFrequency: document.getElementById('minFrequency').value,
+        maxFrequency: document.getElementById('maxFrequency').value,
+        stepSize: document.getElementById('stepSize').value,
+        sweepTime: document.getElementById('sweepTime').value,
+        filter: document.getElementById('filter').value,
+        bias: document.getElementById('bias').value,
+        chargePump: document.getElementById('chargePump').value
+    };
+
+    fetch('/save_config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messagebox = document.getElementById('messagebox');
+        if (data.status === 'success') {
+            messagebox.textContent = "Configuration saved.";
+        } else {
+            messagebox.textContent = "Error: " + data.message;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function loadConfig() {
+    fetch('/load_config', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(config => {
+        document.getElementById('refFrequency').value = config.refFrequency || '';
+        document.getElementById('doubler').checked = config.doubler || false;
+        document.getElementById('frequencyType').value = config.frequencyType || 'CW Frequency';
+        document.getElementById('outputFrequency').value = config.outputFrequency || '1000';
+        document.getElementById('minFrequency').value = config.minFrequency || '4000';
+        document.getElementById('maxFrequency').value = config.maxFrequency || '7000';
+        document.getElementById('stepSize').value = config.stepSize || '100';
+        document.getElementById('sweepTime').value = config.sweepTime || '1000';
+        document.getElementById('filter').value = config.filter || '0';
+        document.getElementById('bias').value = config.bias || '0';
+        document.getElementById('chargePump').value = config.chargePump || '350';
+        toggleFrequencyInputs();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}

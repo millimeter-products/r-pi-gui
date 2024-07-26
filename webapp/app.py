@@ -1,12 +1,39 @@
 from flask import Flask, render_template, request, jsonify
+import json
 import os
-
 import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(9, GPIO.IN)
+
+CONFIG_FILE = 'webapp_config.json'
+DEFAULT_CONFIG = {
+    'refFrequency': '',
+    'doubler': False,
+    'frequencyType': 'CW Frequency',
+    'outputFrequency': '1000',
+    'minFrequency': '4000',
+    'maxFrequency': '7000',
+    'stepSize': '100',
+    'sweepTime': '1000',
+    'filter': '0',
+    'bias': '0',
+    'chargePump': '350'
+}
+
+def save_config(config):
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f)
+
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, 'r') as f:
+            return json.load(f)
+    else:
+        save_config(DEFAULT_CONFIG)
+        return DEFAULT_CONFIG
 
 def read_reference_frequency():
     try:
@@ -26,7 +53,19 @@ def read_reference_frequency():
 @app.route('/')
 def index():
     ref_frequency = read_reference_frequency()
-    return render_template('index.html', ref_frequency=ref_frequency)
+    config = load_config()
+    return render_template('index.html', config=config, ref_frequency=ref_frequency)
+
+@app.route('/save_config', methods=['POST'])
+def save_config_route():
+    config = request.get_json()
+    save_config(config)
+    return jsonify({'status': 'success', 'message': 'Configuration saved'})
+
+@app.route('/load_config', methods=['GET'])
+def load_config_route():
+    config = load_config()
+    return jsonify(config)
 
 @app.route('/set_frequency', methods=['POST'])
 def set_frequency():
@@ -80,12 +119,10 @@ def clear_frequency():
 @app.route('/check_lock_status', methods=['GET'])
 def check_lock_status():
     try:
-        lock_status = 0
-        GPIO.input(9)
+        lock_status = GPIO.input(9)
         return jsonify(locked=(lock_status == GPIO.HIGH))
     except Exception as e:
         return jsonify(status='error', message=str(e))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
