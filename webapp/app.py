@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import os
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(9, GPIO.IN)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(9, GPIO.IN)
 
 CONFIG_FILE = 'webapp_config.json'
 DEFAULT_CONFIG = {
@@ -39,6 +39,12 @@ def load_config():
     save_config(config)  # Save the config with the updated reference frequency
     return config
 
+def load_rfsynthesizer_info():
+    try:
+        with open('rfsynthesizer_info.json', 'r') as f:
+            return json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return {'part_no': 'Unknown', 'serial_no': 'Unknown'}
 
 def read_reference_frequency():
     try:
@@ -57,9 +63,9 @@ def read_reference_frequency():
 
 @app.route('/')
 def index():
-    ref_frequency = read_reference_frequency()
     config = load_config()
-    return render_template('index.html', config=config, ref_frequency=ref_frequency)
+    rfsynthesizer_info = load_rfsynthesizer_info()
+    return render_template('index.html', config=config, rfsynthesizer_info=rfsynthesizer_info)
 
 @app.route('/save_config', methods=['POST'])
 def save_config_route():
@@ -124,7 +130,7 @@ def clear_frequency():
 @app.route('/check_lock_status', methods=['GET'])
 def check_lock_status():
     try:
-        lock_status = GPIO.input(9)
+        #lock_status = GPIO.input(9)
         return jsonify(locked=(lock_status == GPIO.HIGH))
     except Exception as e:
         return jsonify(status='error', message=str(e))

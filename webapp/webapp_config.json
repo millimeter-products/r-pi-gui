@@ -1,0 +1,1 @@
+{"refFrequency": "Error reading frequency", "doubler": false, "frequencyType": "CW Frequency", "outputFrequency": "5000", "minFrequency": "4000", "maxFrequency": "7000", "stepSize": "100", "sweepTime": "1000", "filter": "0", "bias": "0", "chargePump": "350"}
