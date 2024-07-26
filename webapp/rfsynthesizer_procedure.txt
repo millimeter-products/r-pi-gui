@@ -1,0 +1,5 @@
+Step 1: Power on the RF synthesizer device.
+Step 2: Access the webapp with URL http://<device ip address>:5000
+Step 3: Configure the input parameters.
+Step 4: Click on the RF ON button.
+Step 5: Verify the lock status.

@@ -46,6 +46,13 @@ def load_rfsynthesizer_info():
     except (IOError, json.JSONDecodeError):
         return {'part_no': 'Unknown', 'serial_no': 'Unknown'}
 
+def load_procedure():
+    try:
+        with open('rfsynthesizer_procedure.txt', 'r') as f:
+            return f.read()
+    except IOError:
+        return "Error reading procedure file."
+
 def read_reference_frequency():
     try:
         with open('/proc/device-tree/clocks/clock@0/clock-frequency', 'rb') as f:
@@ -65,7 +72,8 @@ def read_reference_frequency():
 def index():
     config = load_config()
     rfsynthesizer_info = load_rfsynthesizer_info()
-    return render_template('index.html', config=config, rfsynthesizer_info=rfsynthesizer_info)
+    procedure = load_procedure()
+    return render_template('index.html', config=config, rfsynthesizer_info=rfsynthesizer_info, procedure=procedure)
 
 @app.route('/save_config', methods=['POST'])
 def save_config_route():
