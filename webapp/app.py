@@ -10,7 +10,7 @@ GPIO.setup(9, GPIO.IN)
 
 CONFIG_FILE = 'webapp_config.json'
 DEFAULT_CONFIG = {
-    'refFrequency': '',
+    'refFrequency': '0',
     'doubler': False,
     'frequencyType': 'CW Frequency',
     'outputFrequency': '1000',
@@ -30,10 +30,15 @@ def save_config(config):
 def load_config():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, 'r') as f:
-            return json.load(f)
+            config = json.load(f)
     else:
-        save_config(DEFAULT_CONFIG)
-        return DEFAULT_CONFIG
+        config = DEFAULT_CONFIG.copy()
+
+    # Read reference frequency from sysfs entry
+    config['refFrequency'] = read_reference_frequency()
+    save_config(config)  # Save the config with the updated reference frequency
+    return config
+
 
 def read_reference_frequency():
     try:

@@ -112,7 +112,7 @@ function checkLockStatus() {
     .then(response => response.json())
     .then(data => {
         const lockCircle = document.querySelector('.lock-circle');
-        if (!data.locked) {
+        if (data.locked) {
             lockCircle.style.backgroundColor = '#4CAF50'; // Green when locked
         } else {
             lockCircle.style.backgroundColor = '#f44336'; // Red when not locked
