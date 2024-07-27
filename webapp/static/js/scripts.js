@@ -191,7 +191,8 @@ function saveConfig() {
         sweepTime: document.getElementById('sweepTime').value,
         filter: document.getElementById('filter').value,
         bias: document.getElementById('bias').value,
-        chargePump: document.getElementById('chargePump').value
+        chargePump: document.getElementById('chargePump').value,
+        rfStatus: document.getElementById('toggle').checked  // Save RF status
     };
 
     fetch('/save_config', {
@@ -235,6 +236,7 @@ function loadConfig() {
         document.getElementById('filter').value = config.filter || '0';
         document.getElementById('bias').value = config.bias || '0';
         document.getElementById('chargePump').value = config.chargePump || '350';
+        document.getElementById('toggle').checked = config.rfStatus || false;  // Load RF status
         toggleFrequencyInputs();
     })
     .catch(error => {

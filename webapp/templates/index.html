@@ -107,7 +107,7 @@
                     </div>
                     <br>
                     <div class="genericdiv">
-                        <input type="checkbox" id="toggle" class="toggleCheckbox" />
+                        <input type="checkbox" id="toggle" class="toggleCheckbox" {% if config.get('rfStatus', False) %}checked{% endif %}/>
                         <label for="toggle" class='toggleContainer'>
                             <div>RF OFF</div>
                             <div>RF ON</div>

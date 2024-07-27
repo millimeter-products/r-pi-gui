@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 CONFIG_FILE = 'webapp_config.json'
 DEFAULT_CONFIG = {
-    'refFrequency': '0',
+    'refFrequency': '',
     'doubler': False,
     'frequencyType': 'CW Frequency',
     'outputFrequency': '1000',
@@ -20,7 +20,8 @@ DEFAULT_CONFIG = {
     'sweepTime': '1000',
     'filter': '0',
     'bias': '0',
-    'chargePump': '350'
+    'chargePump': '350',
+    'rfStatus': False
 }
 
 def save_config(config):
