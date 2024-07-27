@@ -238,6 +238,11 @@ function loadConfig() {
         document.getElementById('chargePump').value = config.chargePump || '350';
         document.getElementById('toggle').checked = config.rfStatus || false;  // Load RF status
         toggleFrequencyInputs();
+        
+        // Call toggleRF if rfStatus is true
+        if (config.rfStatus) {
+            toggleRF(true);
+        }
     })
     .catch(error => {
         console.error('Error:', error);
