@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import os
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(9, GPIO.IN)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(9, GPIO.IN)
 
 CONFIG_FILE = 'webapp_config.json'
 DEFAULT_CONFIG = {
@@ -139,7 +139,7 @@ def clear_frequency():
 @app.route('/check_lock_status', methods=['GET'])
 def check_lock_status():
     try:
-        #lock_status = GPIO.input(9)
+        lock_status = GPIO.input(9)
         return jsonify(locked=(lock_status == GPIO.HIGH))
     except Exception as e:
         return jsonify(status='error', message=str(e))
