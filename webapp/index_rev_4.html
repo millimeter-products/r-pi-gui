@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millimeter Wave Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Animated Wave Background -->
+    <section>
+        <div class='air air1'></div>
+        <div class='air air2'></div>
+        <div class='air air3'></div>
+        <div class='air air4'></div>
+    </section>
+
+    <!-- New Transparent Container for MI-WAVE -->
+<div class="container">
+    <!-- MI-WAVE Section -->
+    <div class="mi-wave-container">
+        <h1 class="mi-wave-title">MI-WAVE</h1>
+        <h2 class="mi-wave-subtitle">Millimeter Wave Products Inc.</h2>
+    </div>
+    <!-- Main Content -->
+ <div class="header">
+        <h1>958 Series Frequency Synthesizer</h1>
+        <div class="header-info">
+            <p>Part no. {{ rfsynthesizer_info['part_no'] }}</p>
+            <p>Serial no. {{ rfsynthesizer_info['serial_no'] }}</p>
+        </div>
+    </div>
+        <div class="main">
+            <div class="left-panel">
+                <div class="genericdiv">
+                    <label>Input parameters</label>
+                </div>
+                <br>
+                <div class="section dark-bg">
+                    <div class="input-group">
+                        <label for="ref-frequency">REF Frequency (MHz)</label>
+                        <input type="text" id="refFrequency" value="{{ config['refFrequency'] }}" readonly>
+                    </div>
+                       
+                </div>
+                <br>
+                <div>
+                    <select id="frequencyType" onchange="toggleFrequencyInputs()">
+                        <option {% if config.get('frequencyType', 'CW Frequency') == 'CW Frequency' %}selected{% endif %}>CW Frequency</option>
+                        <option {% if config.get('frequencyType', 'CW Frequency') == 'Frequency Sweep' %}selected{% endif %}>Frequency Sweep</option>
+                    </select>
+                </div>
+                <br>
+                <label for="message">CW Frequency</label>
+                <div class="section" id="cwfreqdiv">
+                    <div class="input-group">
+                        <label for="output-frequency">Output Frequency (MHz)</label>
+                        <input type="number" id="outputFrequency" name="outputFrequency" min="62" max="32000" value="{{ config.get('outputFrequency', '1000') }}">
+                    </div>
+                </div>
+                <label for="message">Frequency Sweep</label>
+                <div class="section" id="sweepfreqdiv">
+                    <div class="genericdiv">
+                        <div class="input-group">
+                            <label for="min-frequency">Min Frequency (MHz)</label>
+                            <input type="number" id="minFrequency" name="minFrequency" min="62" max="32000" value="{{ config.get('minFrequency', '4000') }}">
+                        </div>
+                        <div class="input-group">
+                            <label for="max-frequency">Max Frequency (MHz)</label>
+                            <input type="number" id="maxFrequency" name="maxFrequency" min="62" max="32000" value="{{ config.get('maxFrequency', '7000') }}">
+                        </div>
+                    </div>
+                    <div class="genericdiv">
+                        <div class="input-group">
+                            <label for="step-size">Step Size (MHz)</label>
+                            <input type="number" id="stepSize" value="{{ config.get('stepSize', '100') }}">
+                        </div>
+                        <div class="input-group">
+                            <label for="sweep-time">Sweep Time (ms)</label>
+                            <input type="number" id="sweepTime" min="1" max="1000" value="{{ config.get('sweepTime', '1000') }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div id="otherparamsdiv">
+                        <div class="genericdiv">
+                            <div class="input-group">
+                                <label for="filter">Filter</label>
+                                <input type="number" id="filter" name="filter" min="0" max="7" value="{{ config.get('filter', '0') }}">
+                            </div>
+                            <div class="input-group">
+                                <label for="bias">Bias</label>
+                                <input type="number" id="bias" name="bias" min="0" max="3" value="{{ config.get('bias', '0') }}">
+                            </div>
+                        </div>
+                        <div class="genericdiv">
+                            <div class="input-group">
+                                <label for="charge-pump-current">Charge Pump Current (mA)</label>
+                                <select id="chargePump">
+                                    <option value="0.35" {% if config.get('chargePump', '1.75') == '0.35' %}selected{% endif %}>0.35</option>
+                                    <option value="0.70" {% if config.get('chargePump', '1.75') == '0.70' %}selected{% endif %}>0.70</option>
+                                    <option value="1.05" {% if config.get('chargePump', '1.75') == '1.05' %}selected{% endif %}>1.05</option>
+                                    <option value="1.40" {% if config.get('chargePump', '1.75') == '1.40' %}selected{% endif %}>1.40</option>
+                                    <option value="1.75" {% if config.get('chargePump', '1.75') == '1.75' %}selected{% endif %}>1.75</option>
+                                    <option value="2.10" {% if config.get('chargePump', '1.75') == '2.10' %}selected{% endif %}>2.10</option>
+                                    <option value="2.45" {% if config.get('chargePump', '1.75') == '2.45' %}selected{% endif %}>2.45</option>
+                                    <option value="2.80" {% if config.get('chargePump', '1.75') == '2.80' %}selected{% endif %}>2.80</option>
+                                    <option value="3.15" {% if config.get('chargePump', '1.75') == '3.15' %}selected{% endif %}>3.15</option>
+                                    <option value="3.50" {% if config.get('chargePump', '1.75') == '3.50' %}selected{% endif %}>3.50</option>
+                                    <option value="3.85" {% if config.get('chargePump', '1.75') == '3.85' %}selected{% endif %}>3.85</option>
+                                    <option value="4.20" {% if config.get('chargePump', '1.75') == '4.20' %}selected{% endif %}>4.20</option>
+                                    <option value="4.55" {% if config.get('chargePump', '1.75') == '4.55' %}selected{% endif %}>4.55</option>
+                                    <option value="4.90" {% if config.get('chargePump', '1.75') == '4.90' %}selected{% endif %}>4.90</option>
+                                    <option value="5.25" {% if config.get('chargePump', '1.75') == '5.25' %}selected{% endif %}>5.25</option>
+                                    <option value="5.60" {% if config.get('chargePump', '1.75') == '5.60' %}selected{% endif %}>5.60</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="genericdiv">
+                        <input type="checkbox" id="toggle" class="toggleCheckbox" {% if config.get('rfStatus', False) %}checked{% endif %}/>
+                        <label for="toggle" class='toggleContainer'>
+                            <div>RF ON</div>
+                            <div>RF OFF</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="status">
+                    <div class="indicator">
+                        <span>Power</span>
+                        <div class="hwdetect-circle"></div>
+                    </div>
+                    <div class="indicator">
+                        <span>Temperature (°C)</span>
+                        <!-- Temperature value updated dynamically here -->
+                        <div id="temperature">Loading...</div>
+                    </div>
+                    <div class="indicator">
+                        <span>Lock</span>
+                        <div class="lock-circle"></div>
+                    </div>
+                </div>
+                <div class="message-procedure">
+
+                    <label for="procedure">Procedure</label>
+                    <textarea id="procedure">{{ procedure }}</textarea>
+				 <label for="message">Message</label>
+                    <textarea id="messagebox"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+   <!-- Bottom Right Text -->
+    <div class="bottom-right-text">Proudly Made in the USA</div>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
