@@ -1,0 +1,36 @@
+Revision History:
+
+app.py - Original Code from Ajai
+app_Rev1.py - Fixed RF On/Off bug
+app_Rev2.py - Partially working charge pump with 404 error
+app_Rev3.py - Charge pump working no errors
+app_Rev4.py - Filter/Bias config working
+app_Rev5.py - Default charge pump value set to 1.75mA and logic for switch
+app_Rev6.py - Temperature sensor implemented
+app_Rev7.py - Removed doubler
+app_Rev8.py - Fixed logic for SP4T, RF1 - CH 32GHz
+app_Rev9.py - Code now dynamically uses device ID
+
+script.js - Original Code from Ajai
+script_Rev1.js - Support for app_Rev2.py
+script_Rev2.js - Support for app_Rev3.py
+script_Rev3.js - Support for app_Rev4.py
+script_Rev4.js - Support for app_Rev5.py
+script_Rev5.js - Support for app_Rev6.py
+script_Rev6.js - Support for app_Rev7.py
+
+index.html - Original Code from Ajai
+index_rev_1.html - Part of webapp revamp by Mauricio, with new changes to Hardware detect
+index_rev_2.html - Temp sensor implemented
+index_rev_3.html - Removed doubler
+index_rev_4.html - Touchups from Mauricio
+
+styles.css - Original Code from Ajai
+styles_rev_1.css - Part of webapp revamp by Mauricio, with new changes to LOCK/
+styles_rev_2.css - Support for Index Rev 4
+
+rpi-adf4371-overlay - Original file from Adi/ Antonio
+rpi-adf4371-overlay_rev1 - Add PIN 12 GPIO Temp Sensor
+
+install_rev_1.sh - Added pyadi-iio and glob2 
+
