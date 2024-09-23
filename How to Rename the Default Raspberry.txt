@@ -1,0 +1,178 @@
+How to Rename the Default Raspberry Pi User
+Posted on January 7, 2016
+NOTE: The article below applies only to Raspian distributions published before April 2022. At that point, the default “pi” user was dropped, for sound security reasons. Subsequent releases include an alternative, and more secure, process for creating a user of your choice (detailed at the above link).
+
+The rest of this article remains online for historical reasons only, and should no longer be used. (author, 6/7/24).
+
+Historical Article
+The Raspberry Pi comes with a default user called “pi”, whose initial password is also set to a well known default. While this makes it easy to use the system, it is not very secure. Anyone with physical access to your Pi could login with these widely known credentials. Furthermore, if you have enabled the SSH server, users on the local network could do the same.
+
+Even if you have changed the “pi” user password, just having a user name that is universally known is still a security risk. The following article explains how to safely rename the “pi” user to something more secure.  This article was last updated on 31st May 2020 and tested with Raspbian (Raspios) Buster release 27/5/2020.
+
+The procedure starts with a Raspberry Pi running the latest Raspbian (Raspio) image (Buster), with no other modifications. It should also work with the older Raspbian versions Stretch and Jessie.
+
+Caution for Jessie users: Changing the name of the “pi” might cause a couple of the features of the raspi-config script to stop working, namely the option 2 to change pi’s password (the “passwd” command can easily be used instead), and option 3 to change the boot environment. It will also prevent menu item “Menu->Preferences->Raspberry Pi Configuration” (the graphical equivalent of raspi-config) from running altogether. If these are important to you, consider not continuing with this procedure.
+
+NOTE: Some procedures on the Internet suggest using the usermod command to just rename the “pi” account. I would not recommend this, because usermod does not update secondary group ownerships, and the Pi user user has many of these. For example, the pi user is able to read the /var/log/syslog file by virtue of being a member of the adm group. Altering the pi user with usermod will break this functionality, as well as other features of the Pi account.
+
+Also, the usermod command will often fail, especially on Raspbian 8 (Jessie), with the error message “usermod: user pi is currently used by process“. This is because user pi owns several system processes by default (in Jessie), and further because you may be logged in as pi and thus own one or more shell processes.
+
+Summary
+The “pi” user account has higher privileges than a normal Unix user account. This is so that you can use the “pi” account to manage the system effectively. As well as being enabled for sudo, “pi” user is a member of no less than 15 user groups, whereas a normal Unix user usually has only one or two group memberships. Changing the name of the “pi” user is therefore a little more challenging than changing the name of a normal Unix user.
+
+In this procedure, a temporary user account is created and then used to change the “pi” user name. A sed pipeline performs the edits automatically. Afterwards, the temporary user is deleted.
+
+Create a Temporary User Account
+Log into your Pi, directly or from another system. Login as “pi” user.
+
+Create a temporary user account as follows. This account will be used to make changes to the existing “pi” account and to other parts of the system. At the conclusion of this procedure, the temporary account will be deleted. Type following commands.
+
+pi@pi ~ $ sudo useradd -m temp -s /bin/bash
+pi@pi ~ $ sudo passwd temp
+Type a suitable password for the “temp” account.
+
+Add the “temp” user to the group “sudo”:
+
+pi@pi ~ $ sudo usermod -a -G sudo temp
+Check the group file. You should see “temp” user has been added to the sudo group:
+
+pi@pi ~ $ grep sudo /etc/group
+sudo:x:27:pi,temp
+Looks good. Now log out of your Raspberry Pi altogether (you are currently logged in as user pi). You should not have any active logins as “pi”. If so, log out of all those sessions.
+
+Login as Temporary User
+Login to the Pi again, this time as user temp, using the password you created above. I am using SSH from another Linux system, so I do it like this.
+
+othersystem$ ssh -l temp <IP address of Pi>
+Once the login has completed, check that you are now “temp”:
+
+temp@pi ~ $ id
+uid=1001(temp) gid=1004(temp) groups=1004(temp),27(sudo)
+That looks correct. NB The numbers 1001, 1004 etc. don’t matter. Yours might be slightly different.
+
+Choose a New Name for the “pi” User
+For this example I will change the name of the “pi” user to “miwv”. You should select a different name of your own choosing.
+
+Make sure that your chosen name is not the same as another existing user. Check it with the id command:
+
+temp@pi ~ $ id miwv
+id: ‘miwv’: no such user
+If the “id” command returns anything other than “no such user”, then please choose an alternative name, and test it again with “id”, before proceeding.
+
+Files to be Changed
+We need to change every reference to “analog” to (say) “miwv” within the files /etc/passwd, group, shadow, gshadow, sudoers, subuid, subgid, aswell as /etc/lightdm/lightdm.conf, /etc/systemd/system/autologin@.service, systemd/system/getty@tty1.service.d/autologin.conf, /etc/polkit-1/localauthority.conf.d/60-desktop-policy.conf and, in more recent Raspbian releases, /etc/sudoers.d/010_pi-nopasswd.  Twelve files in all.
+
+We could simply edit each file by hand. However it is easier to to the job automatically, especially since /etc/group (for example) contains 14 or more occurrences of “pi”. As well as being tedious, performing the edits manually could lead to errors that might prevent the pi from working properly, or even make it difficult to login at all.
+
+Backup Files
+First, take a backup of each file. The following tar command will do it.  Enter your password when asked.
+
+tempuser@pi ~ $ cd /etc
+tempuser@pi /etc $ sudo tar -cvf authfiles.tar passwd group shadow gshadow sudoers subuid subgid lightdm/lightdm.conf systemd/system/autologin@.service sudoers.d/010_pi-nopasswd systemd/system/getty@tty1.service.d/autologin.conf polkit-1/localauthority.conf.d/60-desktop-policy.conf
+If you have just seen a couple of error messages about some missing files, eg. lightdm.conf, it probably means you are using a “lite” version of Raspbian. It doesn’t matter though, the command still worked, just carry on with the procedure.
+
+Edit Files
+Now issue the following commands to make the changes. There are two sed commands here.  Be very careful to get both absolutely as written, including every slash, star, backslash and character, (except that you should replace the word “frederick” with your chosen name):
+
+tempuser@pi ~ $ cd /etc
+tempuser@pi /etc $ sudo sed -i.$(date +'%y%m%d_%H%M%S') 's/\bpi\b/frederick/g' passwd group shadow gshadow sudoers subuid subgid systemd/system/autologin@.service sudoers.d/010_pi-nopasswd systemd/system/getty@tty1.service.d/autologin.conf polkit-1/localauthority.conf.d/60-desktop-policy.conf
+tempuser@pi /etc $ sudo sed -i.$(date +'%y%m%d_%H%M%S') 's/user=pi/user=frederick/' lightdm/lightdm.conf
+The long “sed” commands change the word “pi” to “frederick” in each of the named files files.  But before any changes are made, another backup copy of each file is created, just in case something went wrong or you ever want to undo the change. Having two backups isn’t really needed, it just provides some extra assurance in case the procedure does not work. NB. Raspbian Lite users might see a few messages about missing files again (“No such file or directory“). It doesn’t matter, the command still worked, just carry on.
+
+Check that the changes were made as follows. Replace “frederick” with your chosen name. You should see many matches, as shown.
+
+tempuser@pi ~ $ grep frederick /etc/group
+adm:x:4:frederick
+dialout:x:20:frederick
+cdrom:x:24:frederick
+sudo:x:27:frederick,tempuser
+audio:x:29:frederick
+video:x:44:frederick
+plugdev:x:46:frederick
+games:x:60:frederick
+users:x:100:frederick
+input:x:101:frederick
+netdev:x:108:frederick
+frederick:x:1000:
+spi:x:999:frederick
+i2c:x:998:frederick
+gpio:x:997:frederick
+Every occurrence of “pi” in the /etc/group file has been changed to “frederick”.
+
+Change the Name of the Pi Home Directory
+Rename the “pi” user’s home directory.
+
+tempuser@pi /etc $ sudo mv /home/pi /home/frederick
+Then create a soft link as follows.
+
+tempuser@pi /etc $ sudo ln -s /home/frederick /home/pi
+The purpose of the soft link is to correctly resolve any broken references to the old “pi” home directory. For example, it prevents menu items such as “Python Games” from disappearing. Menu entries are controlled by files (under /usr/share/raspi-ui-overrides/applications), which refer to “/home/pi/<whatever>”. Creating the soft link allows the reference to resolve and is a common practice in this kind of situation.
+
+Change the Name of the Crontab File
+Rename the “pi” user’s crontab file. Remember to replace “frederick” in the following command with your chosen user name.
+
+tempuser@pi /etc $ sudo [ -f /var/spool/cron/crontabs/pi ] && sudo mv -v /var/spool/cron/crontabs/pi /var/spool/cron/crontabs/frederick
+'/var/spool/cron/crontabs/pi' -> '/var/spool/cron/crontabs/frederick'
+If the cron tab file called “pi” exists, it will be renamed to “frederick”. If it does not exist, the above command has no effect and nothing is printed. The cron file will exist only if you have previously set up cron jobs for execution under the “pi” user. Those jobs will now continue to be active for user “frederick”, in this example.
+
+Change the Name of the Mail File
+If you have ever used email as user “pi”, then a mail file will exist for the user, and it’s name should now be updated.
+
+tempuser@pi /etc $ sudo [ -f /var/spool/mail/pi ] && sudo mv -v /var/spool/mail/pi /var/spool/mail/frederick
+'/var/spool/mail/pi' -> '/var/spool/mail/frederick'
+If the mail file called “pi” exists, it will be renamed to “frederick”. Emails that were previously sent or received by user “pi” are now available for user “frederick”, in this example. If the file does not exist, the above command has no effect and no message is printed.
+
+Completion
+That completes the renaming of the “pi” user. The “pi” user no longer exists, as such. It has been renamed to “frederick”, or whatever name you have chosen. From now on you should log in with the new name. Any operations that were possible with the “pi” user will also be possible with your renamed user.
+
+Test the New User
+In another window on a remote system, try to login to the Pi as your new user.
+
+othersystem $ ssh -l frederick <IP address of pi>
+Use the same password as previously used for the “pi” user.
+
+Alternatively, if you are using the Pi desktop (the GUI), you could simply logout (Menu->Shutdown->Logout), and then login again with your new user name.
+
+Any data that previously belonged to the “pi” user now belongs to your renamed user (“frederick” in this case), including the pi home directory and everything in it. Check it now:
+
+frederick@pi ~ $ cd
+frederick@pi ~ $ ls -al
+total 24
+drwxr-xr-x 2 frederick frederick 4096 Dec 15 21:16 .
+drwxr-xr-x 4 root      root      4096 Dec 17 12:11 ..
+-rw------- 1 frederick frederick  773 Dec 17 11:52 .bash_history
+-rw-r--r-- 1 frederick frederick  220 Nov 21 20:32 .bash_logout
+-rw-r--r-- 1 frederick frederick 3512 Nov 21 20:32 .bashrc
+-rw-r--r-- 1 frederick frederick  675 Nov 21 20:32 .profile
+...and so on
+Change the User Password
+If your user password is still the same as the factory default (perhaps because you never changed it for “pi” user), change it to something more secure now:
+
+frederick@jessie:/etc $ passwd frederick
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+Remove the Temporary User
+Finally, once you are satisfied that the renamed “pi” account (“frederick” above) is working correctly, delete tempuser as follows. If you have any sessions logged into the pi as tempuser, log them out first.
+
+It might be a good idea to delay this step for a few days, after you have logged into the Pi several times as your renamed user, and you are sure the renamed user is operating correctly.
+
+frederick@pi ~ $ sudo userdel tempuser
+NB. If you see a message like “userdel: user tempuser is currently used by process 1776“, it means that some processes belonging to the user (tempuser) are still running.  Stop them as follows:
+
+$ sudo pkill -u tempuser
+Then repeat the userdel, and tempuser will be successfully removed:
+
+$ sudo userdel tempuser
+A Systemd Feature
+Incidentally, if you are wondering why tempuser still owned running processes even after logout, it is a bug/feature of systemd. The processes are left running so that users can continue tasks from where they left off after logging in, with tools like screen and tmux.  The “bug” was removed in systemd release 230 in 2016, then replaced, and made a configerable feature, following complaints from users of screen/tmux.  Configuration is controlled by  /etc/systemd/logind.conf, as explained in the bug report.
+
+Notes
+You should find that pressing ctrl-alt-F1 to exit from the graphical desktop into the console works as before, and you can use ctrl-alt-F2 to switch back.  This was achieved when the systemd/system/autologin@.service file was changed.  However, console switching is a bit old fashioned, and the preferred solution is to edit your GUI/console preferences with the raspi-config “Boot Options” sub menu.
+
+The udisksctl should also continue to work, if you are a user of that. Changes made to the file 60-desktop-policy.conf switched control of that command from the “pi” user to your new user name.
+
+Conclusion
+I hope that this procedure has been useful. Thanks to Simon Blake, Sam Roberts and Nicolas from moodlebox.net and Dooley for file updates (see below).  20/6/19 – Thanks also to Phillipe for his advice on updating the procedure for Raspbian 9.9 (alterations to the way that lightdm.conf is edited).  14/4/20 – Thanks to Johannes for adding subuid and subgid files.  31/5/20 Thanks to Billy for the tip on file /etc/systemd/system/getty@tty1.service.d/autologin.conf.
+
+This entry was posted in Linux, Raspberry Pi, Security and tagged /etc/group, /etc/gshadow, /etc/passwd, /etc/shadow, /etc/sudoers, autologin@.service, buster, change the pi user, default password, default user, factory default, group, gshadow, home, jessie, lightdm.conf, passwd, pi, pi password, pi user, raspberry pi, raspbian, raspios, shadow, sudoers, useradd, usermod, usermod: user pi is currently used by process, wheezy by Jim. Bookmark the permalink.
