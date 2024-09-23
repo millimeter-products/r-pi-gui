@@ -1,0 +1,537 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    color: #E0E0E0; /* Light gray text for contrast */
+    background: #0A1E3B; /* Dark blue background */
+    overflow: hidden; /* Prevents scrolling */
+}
+#frequencyTypeContainer {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+    height: 100vh; /* Set to fill the viewport height */
+    width: 100vw; /* Set to fill the viewport width */
+    margin: 0; /* Remove margin */
+    padding: 0; /* Remove padding */
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: none;
+    border-radius: 0; /* Remove border radius to reach the edge */
+    box-shadow: none;
+}
+/* Styles for Top Right Text */
+.top-right-text {
+    position: absolute;
+    top: 20px; /* Position 20px from the bottom */
+    right: 20px; /* Position 20px from the right */
+    font-family: Arial, sans-serif;
+    font-size: 1.2em;
+    color: #E0E0E0; /* Light gray text color */
+    background: rgba(139, 0, 0, 0.8); /* Semi-transparent dark blue background */
+    padding: 10px;
+    border-radius: 5px; /* Rounded corners */
+    z-index: 3; /* Ensure it's above other elements */
+}
+/* Styles for MI-WAVE Container */
+.mi-wave-container {
+    width: 100%; /* Make it full width of the container */
+    text-align: center;
+    background: rgba(10, 30, 59, 0.7); /* Semi-transparent dark blue */
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 10px; /* Add margin below to separate it from the rest of the content */
+    z-index: 2;
+}
+/* Define the custom font */
+@font-face {
+    font-family: 'AR DESTINE';
+    src: url('ar-destine.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Apply the custom font to specific elements */
+body {
+    font-family: Arial, sans-serif; /* Fallback font */
+}
+
+.mi-wave-title {
+    font-family: 'AR DESTINE', sans-serif; /* Apply AR DESTINE */
+    font-size: 6em; 
+    color: #E0E0E0;
+    margin: 0;
+}
+
+.mi-wave-subtitle {
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+    color: #E0E0E0;
+    margin: 0;
+    margin-top: 5px;
+    margin-bottom: 5px; /* Reduced bottom margin */
+}
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Ensure padding and border do not affect total width and height */
+}
+
+/* Background Waves */
+section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #0A1E3B; /* Dark blue background */
+    overflow: hidden;
+    z-index: -1; /* Place behind the main content */
+}
+
+/* Main Content Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #E0E0E0; /* Light gray text color for contrast */
+    overflow: hidden; /* Prevents scrolling */
+}
+
+.container {
+    height: 100vh; /* Set height to 100% of the viewport height */
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: none;
+    border-radius: 12px;
+    z-index: 1;
+    position: relative;
+    padding: 20px;
+    box-shadow: none;
+    margin-top: 0; /* Remove the margin */
+}
+
+.header {
+    text-align: center;
+    padding: 10px;
+    background: linear-gradient(to right, #003366, #004080); /* Darker blue gradient for header */
+    color: #E0E0E0; /* Light gray text color for contrast */
+    box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.3); /* Inner shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8em; /* Larger font size for the header */
+    font-weight: bold;
+}
+
+.header-info {
+    display: flex;
+    justify-content: center;
+    gap: 50px; /* Spacing between header info items */
+    margin-top: 10px;
+}
+
+.header-info p {
+    margin: 0;
+    color: #A0B9D9; /* Light blue-gray for info text */
+    font-weight: 500;
+}
+
+.main {
+    display: flex;
+    background: transparent; /* Transparent background for main area */
+}
+
+.left-panel, .right-panel {
+    padding: 20px;
+    box-sizing: border-box;
+    color: #E0E0E0; /* Light gray text color */
+}
+
+.left-panel {
+    width: 50%;
+    border-right: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border to separate panels */
+}
+
+.right-panel {
+    width: 50%;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    background: rgba(25, 50, 80, 0.8); /* Semi-transparent dark blue for sections */
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 15px;
+    color: #E0E0E0; /* Light gray text color */
+    border-radius: 8px; /* Rounded corners for sections */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for 3D effect */
+}
+
+.section.dark-bg {
+    background: rgba(20, 40, 70, 0.8); /* Slightly darker transparent blue */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 20px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for 3D effect */
+}
+
+.section.dark-bg .input-group {
+    display: flex;
+    align-items: center;
+    color: #E0E0E0; /* Light gray for text */
+}
+
+.section.dark-bg label, .section label {
+    color: #A0B9D9; /* Light blue-gray for labels */
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(15, 30, 60, 0.8); /* Semi-transparent dark blue for status */
+    padding: 15px;
+    box-sizing: border-box;
+    gap: 5px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for 3D effect */
+}
+
+.status .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 20px;
+    padding: 5px;
+    gap: 5px;
+}
+
+/* Circle Styles for Inactive State */
+.lock-circle {
+width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: red; /* Red fill for the circle in inactive state */
+    
+}
+
+.hwdetect-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: #00ff00; /* Bright green fill for the circle */
+        
+}
+
+.message-procedure {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 30px;
+    background: rgba(25, 50, 80, 0.8); /* Semi-transparent dark blue for message area */
+    color: #E0E0E0; /* Light gray for text */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for 3D effect */
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    margin-top: 5px;
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity for text area */
+    color: #E0E0E0; /* Light gray for text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+}
+
+.genericdiv {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+    color: #E0E0E0; /* Light gray for text */
+}
+
+label, span {
+    font-weight: bold;
+    color: #A0B9D9; /* Light blue-gray for labels */
+}
+
+.toggleContainer {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: fit-content;
+    border: 2px solid #004080; /* Dark blue border for toggle */
+    background: rgba(0, 51, 102, 0.8); /* Semi-transparent dark blue background for toggle */
+    font-weight: bold;
+    color: #E0E0E0; /* Light gray text color */
+    cursor: pointer;
+    border-radius: 20px; /* Rounded corners for toggle */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow for 3D effect */
+}
+
+.toggleContainer::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 0%;
+    background: #004080; /* Dark blue background for active side */
+    transition: all 0.3s;
+    border-radius: 20px; /* Rounded corners for toggle */
+}
+
+.toggleCheckbox:checked + .toggleContainer::before {
+    left: 50%;
+}
+
+.toggleContainer div {
+    padding: 5px;
+    text-align: center;
+    z-index: 1;
+}
+
+.toggleCheckbox {
+    display: none;
+}
+
+.toggleCheckbox:checked + .toggleContainer div:first-child {
+    color: #E0E0E0; /* Light gray text for active side */
+    transition: color 0.3s;
+}
+
+.toggleCheckbox:checked + .toggleContainer div:last-child {
+    color: #004080; /* Dark blue text for inactive side */
+    transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer div:first-child {
+    color: #004080; /* Dark blue text for inactive side */
+    transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer div:last-child {
+    color: #E0E0E0; /* Light gray text for active side */
+    transition: color 0.3s;
+}
+
+select {
+    width: 160px;
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px;
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity for select */
+    color: #E0E0E0; /* Light gray for text */
+    cursor: pointer;
+    transition: border-color 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow for 3D effect */
+}
+
+input {
+    width: 90px;
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity for input */
+    color: #E0E0E0; /* Light gray for text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+}
+
+/* Disabled class for greying out input fields */
+.disabled {
+    opacity: 0.5; /* Makes the section appear greyed out */
+    pointer-events: none; /* Prevents interaction */
+}
+
+.disabled input, .disabled select {
+    background-color: #555; /* Change background to grey */
+    color: #ccc; /* Change text color to light grey */
+}
+
+/* Frequency Hop Section Styling */
+.frequency-hop-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.frequency-hop-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.frequency-hop-input-group label {
+    flex-shrink: 0;
+    font-weight: bold;
+    color: #A0B9D9; /* Light blue-gray for labels */
+    margin-right: 10px; /* Adds extra spacing between Select labels and inputs */
+}
+
+.frequency-hop-input-group input[type="number"].frequency-input {
+    width: 150px; /* Make the frequency input wider */
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity */
+    color: #E0E0E0; /* Light gray for text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+    padding: 5px;
+    text-align: center; /* Center the text */
+}
+
+.frequency-hop-input-group .time-input-container {
+    display: flex;
+    gap: 5px; /* Space between HH, MM, SS inputs */
+}
+
+button {
+    padding: 10px;
+    background-color: #004080;
+    color: #E0E0E0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:disabled {
+    background-color: #555;
+    color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+#procedure {
+    width: 100%;
+    height: 300px; /* Set a fixed height */
+    overflow-y: scroll; /* Force vertical scrolling */
+    resize: none; /* Disable manual resizing */
+    margin-top: 5px;
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity */
+    color: #E0E0E0; /* Light gray for text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+}
+#messagebox {
+    width: 100%;
+    height: 30px; /* Set height for a single line */
+    overflow-y: hidden; /* Disable vertical scrolling */
+    resize: none; /* Disable resizing */
+    margin-top: 5px;
+    background: rgba(30, 45, 70, 0.9); /* Dark blue with slightly higher opacity */
+    color: #E0E0E0; /* Light gray for text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+/* Hide scroll bar but allow scrolling for the entire body */
+body {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+    width: 0; /* Chrome, Safari, and Opera */
+    height: 0;
+}
+
+/* Apply to specific containers */
+.container, .left-panel, .right-panel, .section, textarea, #messagebox {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.container::-webkit-scrollbar, .left-panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar, .section::-webkit-scrollbar, textarea::-webkit-scrollbar, #messagebox::-webkit-scrollbar {
+    width: 0; /* Chrome, Safari, and Opera */
+    height: 0;
+}
+.charge-pump-container {
+    margin-top: 20px; /* Add space above the Charge Pump section */
+    margin-bottom: 20px; /* Add space below the Charge Pump section */
+    padding: 10px; /* Optional: Add some padding inside the container */
+}
+
+/* Style for the Filter Settings Heading */
+.filter-settings-heading {
+    text-align: center;
+    font-size: 1em; /* Bigger font size */
+    color: #A0B9D9; /* Same light blue-gray color as labels */
+    font-weight: bold;
+    margin-bottom: 20px; /* Add spacing below the heading */
+}
+
+#chargePump {
+    padding: 5px; /* Add padding to the dropdown itself */
+    margin-top: 10px; /* Add space between the label and the dropdown */
+}
+/* Align input fields next to their labels in Frequency Sweep Section */
+#sweepfreqdiv .input-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Space between rows */
+}
+
+/* Add a bit of space between the label and input field */
+#sweepfreqdiv .input-group label {
+    margin-right: 10px;
+    flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+/* Ensure input fields take up a reasonable width */
+#sweepfreqdiv .input-group input {
+    width: 150px; /* Adjust the width of the input field */
+    padding: 5px;
+    background: rgba(30, 45, 70, 0.9); /* Keep the dark blue background */
+    color: #E0E0E0; /* Light gray text */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); /* Inner shadow for 3D effect */
+}
+#sweepfreqdiv .input-group {
+    margin-bottom: 15px; /* Add space between the input groups */
+}
+
+#sweepfreqdiv {
+    padding: 20px; /* Add padding inside the container */
+    margin-bottom: 20px; /* Add space below the entire sweep section */
+    background: rgba(25, 50, 80, 0.8); /* Optional: Add a background for better visibility */
+    border-radius: 8px; /* Optional: Add rounded corners for a clean look */
+}
+
+/* Style specific to Select 1 and Select 2 */
+.input-group-select label {
+    margin-right: 20px; /* Adds extra spacing between Select 1 and Select 2 labels and inputs */
+}
+
