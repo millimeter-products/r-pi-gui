@@ -1,5 +1,26 @@
-Step 1: Power on the RF synthesizer device.
-Step 2: Access the webapp with URL http://<device ip address>:5000
-Step 3: Configure the input parameters.
-Step 4: Click on the RF ON button.
-Step 5: Verify the lock status.
+Procedure:
+
+Step 1: Apply the reference frequency before powering on the unit.
+Step 2:Power on the unit.
+Step 3:Access the web application by navigating to the URL: http://<device ip address>:5000.
+Step 4:Configure the input parameters: Frequency (CW/Sweep), Filter/Bias, and Charge Pump Current.
+Step 5:Click the "RF ON" button.
+Step 6:Verify the lock status.
+
+Notes:
+
+1. For CW frequency, set the value in the Output Frequency field.
+2. For Frequency Sweep, configure the required parameters.
+3. The default charge pump current is set to 1.72 mA.
+4. Adjust the charge pump current as needed based on the bandwidth requirements.
+5. For frequencies between 16 GHz and 32 GHz, adjust the Filter and Bias settings as specified below.
+
+
+Frequency(GHz)	Filter	Bias	
+16   to 18	7	3	
+18   to 19	3	3	
+19   to 20.5	1	0	
+20.5 to 26	0	0	
+26   to 32	0	1	
+
+
