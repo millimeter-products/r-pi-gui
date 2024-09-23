@@ -42,8 +42,8 @@ do_install_virtualenv()
 	echo "Installing Flask..."
 	pip install flask
 	pip install RPi.GPIO
-        pip install pyadi-iio
-        pip install glob2
+        pip install /home/miwv/pyadi-iio
+        pip install w1thermsensor
 	
 	# create systemd service file
 	do_create_systemd_service_file
