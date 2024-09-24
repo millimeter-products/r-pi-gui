@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 # Variables
-VENV_PATH="${HOME}/MiWaveRFSynthensizer/venv"
-APP_PATH="${HOME}/MiWaveRFSynthensizer/webapp"
+VENV_PATH="${HOME}/MiWaveRFSynthesizer/venv"
+APP_PATH="${HOME}/MiWaveRFSynthesizer/webapp"
 SERVICE_NAME="miwave-rpi-synthesizer"
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
 USERNAME="root"
@@ -44,7 +44,7 @@ do_install_virtualenv()
 	pip install RPi.GPIO
         pip install /home/miwv/pyadi-iio
         pip install w1thermsensor
-	
+		
 	# create systemd service file
 	do_create_systemd_service_file
 
@@ -72,19 +72,19 @@ do_install_virtualenv()
 sudo apt update -y
 sudo apt upgrade -y
 
-if [ -d "${HOME}/MiWaveRFSynthensizer" ]
+if [ -d "${HOME}/MiWaveRFSynthesizer" ]
 then
 	echo "Removing existing installtion..."
-	sudo rm -rf "${HOME}/MiWaveRFSynthensizer"
+	sudo rm -rf "${HOME}/MiWaveRFSynthesizer"
 fi
 
-mkdir "${HOME}/MiWaveRFSynthensizer"
+mkdir "${HOME}/MiWaveRFSynthesizer"
 
 if [ -d ./webapp ]
 then
-	cp -r ./webapp ${HOME}/MiWaveRFSynthensizer/
+	cp -r ./webapp ${HOME}/MiWaveRFSynthesizer/
 else
-	echo "Failed to install MiWave's synthensizer application!!!"
+	echo "Failed to install MiWave's synthesizer application!!!"
 	exit -1
 fi
 
