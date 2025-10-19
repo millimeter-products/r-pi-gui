@@ -6,269 +6,381 @@
     <title>Millimeter Wave Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
+
 </head>
 <body>
-    <!-- New Transparent Container for MI-WAVE --> 
+    <!-- "Proudly Made in the USA" Text -->
+    <div class="top-right-text">Proudly Made in the USA</div>
+
+    <!-- Container for Tab Content -->
     <div class="container">
-        <!-- MI-WAVE Section -->
-        <div class="mi-wave-container">
-            <h1 class="mi-wave-title">MI-WAVE</h1>
-            <h2 class="mi-wave-subtitle">Millimeter Wave Products Inc.</h2>
-        </div>
-
-        <!-- Main Content -->
-        <div class="header">
-            <h1>958 Series Frequency Synthesizer</h1>
-            <div class="header-info">
-                <p>Part no. {{ rfsynthesizer_info['part_no'] }}</p>
-                <p>Serial no. {{ rfsynthesizer_info['serial_no'] }}</p>
-            </div>
-        </div>
-                                             <!-- Left Panel -->
-
-
-        <div class="main">
-            <div class="left-panel">
-                <div class="input-heading label">
-                    <label>Input parameters</label>
-                </div>
-                <br>
-
-                <div id="frequencyTypeContainer">
-                 <label for="frequencyType">Select Frequency Type</label>
-                 <select id="frequencyType" onchange="toggleFrequencyInputs()">
-                     <option>CW Frequency</option>
-                     <option>Frequency Sweep</option>
-                     <option>Frequency Hop</option>
-                     <option>External Trigger Mode</option>
-                 </select>
-             </div>
-
-
-             <!-- CW Frequency Section -->
-                <label for="message" text="CW Frequency">CW Frequency</label>
-                <div class="section" id="cwfreqdiv">
-                    <div class="input-group">
-                        <label for="output-frequency">Output Frequency (MHz)</label>
-                        <input type="number" id="outputFrequency" name="outputFrequency" min="62" max="32000" step="0.000001" placeholder="MHz" value="{{ config.get('outputFrequency', '1000') }}">
-                    </div>
-                </div>
-
-   
-
-                <!-- Frequency Sweep Section -->
-                <label for="message" text="Frequency Sweep">Frequency Sweep</label>
-
-                <div class="section" id="sweepfreqdiv">
-                    <div class="genericdiv">
-                        <div class="input-group">
-                            <label for="min-frequency">Min Frequency (MHz)</label>
-                            <input type="number" id="minFrequency" name="minFrequency" min="62" max="32000" step="0.000001" placeholder="MHz" value="{{ config.get('minFrequency', '4000') }}">
-                        </div>
-                        <div class="input-group">
-                            <label for="max-frequency">Max Frequency (MHz)</label>
-                            <input type="number" id="maxFrequency" name="maxFrequency" min="62" max="32000" step="0.000001" placeholder="MHz"value="{{ config.get('maxFrequency', '7000') }}">
-                        </div>
-                    </div>
-                    <div class="genericdiv">
-                        <div class="input-group">
-                            <label for="step-size">Step Size (MHz)</label>
-                            <input type="number" id="stepSize" placeholder="MHz" value="{{ config.get('stepSize', '100') }}">
-                        </div>
-                        <div class="input-group">
-                            <label for="sweep-time">Sweep Time (ms)</label>
-                            <input type="number" id="sweepTime" min="1" max="1000" placeholder="ms" value="{{ config.get('sweepTime', '1000') }}">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Frequency Hop Section -->
-                <label for="message" text="Frequency Hop">Frequency Hop</label>
-                <div class="section" id="hopfreqdiv" style="display:none;">
-                    <div class="frequency-hop-container">
-                        <!-- Repeat input groups for each frequency and dwell time (1 to 10) -->
-                        {% for i in range(1, 11) %}
-                        <div class="frequency-hop-input-group">
-                            <label for="freq{{i}}">Frequency {{i}} (MHz)</label>
-                            <input type="number" id="freq{{i}}" name="freq{{i}}" class="frequency-input" min="62" max="32000" step="0.000001" placeholder="MHz">
-
-                            <label for="dwell{{i}}">Dwell Time {{i}}</label>
-                            <div class="time-input-container">
-                                <input type="number" id="dwell_hr{{i}}" name="dwell_hr{{i}}" min="0" max="23" placeholder="HH">
-                                <input type="number" id="dwell_min{{i}}" name="dwell_min{{i}}" min="0" max="59" placeholder="MM">
-                                <input type="number" id="dwell_sec{{i}}" name="dwell_sec{{i}}" min="0" max="59" placeholder="SS">
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <!-- Save and Clear Buttons -->
-                    <div class="button-container">
-                        <button id="saveFrequencies">Save Frequencies</button>
-                        <button id="clearFrequencies">Clear Frequencies</button>
-                    </div>
-                </div>
-
-
-                <!-- External Trigger Mode Section -->
-                <label for="message" text="External Trigger Mode">External Trigger Mode</label>
-                <div class="section" id="externalTriggerDiv" style="display:none;">
-                    <div class="frequency-table-container">
-                        <!-- Table for 30 frequencies (3 columns) -->
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Frequency 1-10 (MHz)</th>
-                                    <th>Frequency 11-20 (MHz)</th>
-                                    <th>Frequency 21-30 (MHz)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for i in range(1, 11) %}
-                                <tr>
-                                    <td><input type="number" id="extFreq{{i}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
-                                    <td><input type="number" id="extFreq{{i + 10}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
-                                    <td><input type="number" id="extFreq{{i + 20}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="button-container">
-                        <button id="startExternalTrigger">Start</button>
-                        <button id="stopExternalTrigger">Stop</button>
-                    </div>
-                </div>
-
-
-
-                <!-- Other Parameters Section 1 -->
-                <div>
-                    <div id="otherparamsdiv">
-                        <!-- Filter and Bias -->
-                        <div class="genericdiv">
-                            <div class="section filter-settings-container">
-                                <label for="filter" class="filter-settings-heading">Filter Settings</label>
-
-                                <!-- Input group for labels and inputs -->
-                                <div class="input-group-wrapper">
-                                    <!-- Row for labels -->
-                                    <div class="label-row">
-                                        <label for="filter">Select 1</label>
-                                        <label for="bias">Select 2</label>
-                                    </div>
-                                    <!-- Row for inputs -->
-                                    <div class="input-row">
-                                        <!-- Dropdown for Select 1 (Filter) -->
-                                        <select id="filter" name="filter">
-                                            <option value="0" {% if config.get('filter', '0') == '0' %}selected{% endif %}>0</option>
-                                            <option value="1" {% if config.get('filter', '0') == '1' %}selected{% endif %}>1</option>
-                                            <option value="2" {% if config.get('filter', '0') == '2' %}selected{% endif %}>2</option>
-                                            <option value="3" {% if config.get('filter', '0') == '3' %}selected{% endif %}>3</option>
-                                            <option value="4" {% if config.get('filter', '0') == '4' %}selected{% endif %}>4</option>
-                                            <option value="5" {% if config.get('filter', '0') == '5' %}selected{% endif %}>5</option>
-                                            <option value="6" {% if config.get('filter', '0') == '6' %}selected{% endif %}>6</option>
-                                            <option value="7" {% if config.get('filter', '0') == '7' %}selected{% endif %}>7</option>
-                                        </select>
-
-                                        <!-- Dropdown for Select 2 (Bias) -->
-                                        <select id="bias" name="bias">
-                                            <option value="0" {% if config.get('bias', '0') == '0' %}selected{% endif %}>0</option>
-                                            <option value="1" {% if config.get('bias', '0') == '1' %}selected{% endif %}>1</option>
-                                            <option value="2" {% if config.get('bias', '0') == '2' %}selected{% endif %}>2</option>
-                                            <option value="3" {% if config.get('bias', '0') == '3' %}selected{% endif %}>3</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                      
-               
-
-
-                      <!-- Other Parameters Section 2 -->
-
-                      <div>
-                    <div id="otherparamsdiv">                     												    
-                        <div class="genericdiv">
-						<!-- Charge pump current settings -->
-                            <div class="section charge-pump-container">
-                                <label for="chargePump" class="charge-pump-heading">Synthesizer Settings</label>
-                                <div class="input-group-select charge-pump-group">
-                                    <label for="chargePump">Charge Pump Current (mA)</label>
-                                    <select id="chargePump">
-                                        <option value="0.35" {% if config.get('chargePump', '1.75') == '0.35' %}selected{% endif %}>0.35</option>
-                                        <option value="0.70" {% if config.get('chargePump', '1.75') == '0.70' %}selected{% endif %}>0.70</option>
-                                        <option value="1.05" {% if config.get('chargePump', '1.75') == '1.05' %}selected{% endif %}>1.05</option>
-                                        <option value="1.40" {% if config.get('chargePump', '1.75') == '1.40' %}selected{% endif %}>1.40</option>
-                                        <option value="1.75" {% if config.get('chargePump', '1.75') == '1.75' %}selected{% endif %}>1.75</option>
-                                        <option value="2.10" {% if config.get('chargePump', '1.75') == '2.10' %}selected{% endif %}>2.10</option>
-                                        <option value="2.45" {% if config.get('chargePump', '1.75') == '2.45' %}selected{% endif %}>2.45</option>
-                                        <option value="2.80" {% if config.get('chargePump', '1.75') == '2.80' %}selected{% endif %}>2.80</option>
-                                        <option value="3.15" {% if config.get('chargePump', '1.75') == '3.15' %}selected{% endif %}>3.15</option>
-                                        <option value="3.50" {% if config.get('chargePump', '1.75') == '3.50' %}selected{% endif %}>3.50</option>
-                                        <option value="3.85" {% if config.get('chargePump', '1.75') == '3.85' %}selected{% endif %}>3.85</option>
-                                        <option value="4.20" {% if config.get('chargePump', '1.75') == '4.20' %}selected{% endif %}>4.20</option>
-                                        <option value="4.55" {% if config.get('chargePump', '1.75') == '4.55' %}selected{% endif %}>4.55</option>
-                                        <option value="4.90" {% if config.get('chargePump', '1.75') == '4.90' %}selected{% endif %}>4.90</option>
-                                        <option value="5.25" {% if config.get('chargePump', '1.75') == '5.25' %}selected{% endif %}>5.25</option>
-                                        <option value="5.60" {% if config.get('chargePump', '1.75') == '5.60' %}selected{% endif %}>5.60</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-                   <!-- RF ON/OFF Toggle -->
-
-            </div>
-                <br>
-                <div id="rfToggleContainer" class="rf-toggle-container">
-                    <input type="checkbox" id="toggle" class="toggleCheckbox" {% if config.get('rfStatus', False) %}checked{% endif %}/>
-                    <label for="toggle" class='toggleContainer'>
-                        <div>RF ON</div>
-                        <div>RF OFF</div>
-                    </label>
-                </div>
-            </div>
-
-                                                         <!-- Right Panel -->
-
-            <div class="right-panel">
-                <div class="status">
-                    <div class="indicator">
-                        <span>Power</span>
-                        <div class="hwdetect-circle"></div>
-                    </div>
-                    <div class="indicator">
-                        <span>REF Frequency (MHz)</span>
-                        <div id="refFrequency">{{ config['refFrequency'] }}</div>
-                    </div>
-                    <div class="indicator">
-                        <span>Temperature (°C)</span>
-                        <div id="temperature">Loading...</div>
-                    </div>
-                    <div class="indicator">
-                        <span>Lock</span>
-                        <div class="lock-circle"></div>
-                    </div>
-                </div>
-                <div class="message-procedure">
-                    <label for="procedure">Procedure</label>
-                    <pre id="procedure">{{ procedure }}</pre>
-                    <label for="message">Message</label>
-                    <pre id="messagebox"></pre>
-                </div>
-            </div>
-            <div class="top-right-text">Proudly Made in the USA</div>
+<!-- MI-WAVE Section -->
+<div class="mi-wave-container">
+    <h1 class="mi-wave-title">MI-WAVE</h1>
+    <h2 class="mi-wave-subtitle">Millimeter Wave Products Inc.</h2>
+</div>
+<div class="container" style="border: 0px solid #0A1E3B;"> 
+<div class="header-container">
+    <div class="header">
+        <h1>958 Series Frequency Synthesizer</h1>
+        <div class="header-info">
+            <p>Part no. {{ rfsynthesizer_info['part_no'] }}</p>
+            <p>Serial no. {{ rfsynthesizer_info['serial_no'] }}</p>
         </div>
     </div>
-    
-   <!-- Top Right Text -->
-    
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
+    <!-- Combined Navigation and Action Buttons Row -->
+    <div class="button-row">
+        <!-- Tab Buttons -->
+        <button class="tab-button" onclick="location.href='{{ url_for('index') }}';">Main</button>
+        <button class="tab-button" onclick="location.href='{{ url_for('help') }}';">Help</button>
+
+        <!-- Action Buttons -->
+        <button id="rebootButton" class="danger-button">REBOOT</button>
+        <button id="shutdownButton" class="danger-button">SHUTDOWN</button>
+    </div>
+</div>
+ <!-- Tab Sections -->
+        <div class="tab-content">
+	
+			<!-- Main Tab Section -->
+			<div id="mainTab" class="tab-section active">
+												 <!-- Left Panel -->
+			<div class="main">
+				<div class="left-panel">
+					<div class="input-heading label">
+						<label>Input parameters</label>
+					</div>
+					<label for="message" text="Set Ref Frequency">Set New Reference Frequency</label>
+					<div class="section" id="setreffreqdiv">
+            			<div class="input-section">
+                		    <label for="refFreq">Reference Frequency (MHz)</label>
+                		    <input type="number" id="refFreq" placeholder="MHz" min="10" max="500" step="1">
+                		    <button id="setRefFreq">Set</button>
+                		    <span id="refFreqError" style="color: red; font-size: 12px;"></span>
+				    <br>
+				    <br>
+				    <div class="input-section">
+					    <label>
+						<input type="checkbox" id="enableRefDoubler"> Enable Reference Doubler
+					    </label>
+    					    <label style="margin-left: 15px;"> <!-- Add some spacing -->
+        					<input type="checkbox" id="enableRefDivideBy2"> Reference Divide-by-2
+    					    </label>
+
+					</div>
+            			</div>
+            			</div>
+
+					<br>
+
+					<div id="frequencyTypeContainer">
+					 <label for="frequencyType">Select Frequency Type</label>
+					 <select id="frequencyType" onchange="toggleFrequencyInputs()">
+						 <option>CW Frequency</option>
+						 <option>Frequency Sweep</option>
+						 <option>Frequency Hop</option>
+						 <option>External Trigger Mode</option>
+						 <option>PWM Mode</option>
+					 </select>
+				 </div>
+
+
+				 <!-- CW Frequency Section -->
+					<label for="message" text="CW Frequency">CW Frequency</label>
+					<div class="section" id="cwfreqdiv" style="display:none;">
+						<div class="input-group">
+							<label for="output-frequency">Output Frequency (MHz)</label>
+							<input type="number" id="outputFrequency" name="outputFrequency" min="62" max="32000" step="0.000001" placeholder="MHz" value="{{ config.get('outputFrequency', '1000') }}">
+						</div>
+					</div>
+
+					<!-- Frequency Sweep Section -->
+					<label for="message" text="Frequency Sweep">Frequency Sweep</label>
+					<div class="section" id="sweepfreqdiv" style="display:none;">
+						<div class="genericdiv">
+							<div class="input-group">
+								<label for="min-frequency">Min Frequency (MHz)</label>
+								<input type="number" id="minFrequency" name="minFrequency" min="62" max="32000" step="0.000001" placeholder="MHz" value="{{ config.get('minFrequency', '4000') }}">
+							</div>
+							<div class="input-group">
+								<label for="max-frequency">Max Frequency (MHz)</label>
+								<input type="number" id="maxFrequency" name="maxFrequency" min="62" max="32000" step="0.000001" placeholder="MHz"value="{{ config.get('maxFrequency', '7000') }}">
+							</div>
+						</div>
+						<div class="genericdiv">
+							<div class="input-group">
+								<label for="step-size">Step Size (MHz)</label>
+								<input type="number" id="stepSize" placeholder="MHz" value="{{ config.get('stepSize', '100') }}">
+							</div>
+							<div class="input-group">
+								<label for="sweep-time">Sweep Time (ms)</label>
+								<input type="number" id="sweepTime" min="1" max="1000" placeholder="ms" value="{{ config.get('sweepTime', '1000') }}">
+							</div>
+						</div>
+					</div>
+
+					<!-- Frequency Hop Section -->
+					<label for="message" text="Frequency Hop">Frequency Hop</label>
+					<div class="section" id="hopfreqdiv" style="display:none;">
+						<div class="frequency-hop-container">
+							<!-- Repeat input groups for each frequency and dwell time (1 to 10) -->
+							{% for i in range(1, 11) %}
+							<div class="frequency-hop-input-group">
+								<label for="freq{{i}}">Frequency {{i}} (MHz)</label>
+								<input type="number" id="freq{{i}}" name="freq{{i}}" class="frequency-input" min="62" max="32000" step="0.000001" placeholder="MHz">
+
+								<label for="dwell{{i}}">Dwell Time {{i}}</label>
+								<div class="time-input-container">
+									<input type="number" id="dwell_hr{{i}}" name="dwell_hr{{i}}" min="0" max="23" placeholder="HH">
+									<input type="number" id="dwell_min{{i}}" name="dwell_min{{i}}" min="0" max="59" placeholder="MM">
+									<input type="number" id="dwell_sec{{i}}" name="dwell_sec{{i}}" min="0" max="59" placeholder="SS">
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+						<!-- Save and Clear Buttons -->
+						<div class="button-container">
+							<button id="saveFrequencies">Save Frequencies</button>
+							<button id="clearFrequencies">Clear Frequencies</button>
+						</div>
+					</div>
+
+
+					<!-- External Trigger Mode Section -->
+					<label for="message" text="External Trigger Mode">External Trigger Mode</label>
+					<div class="section" id="externalTriggerDiv" style="display:none;">
+						<div class="frequency-table-container">
+							<!-- Table for 60 frequencies (6 columns) -->
+							<table>
+								<thead>
+									<tr>
+										<th>Frequency 1-10 </th>
+										<th>Frequency 11-20 </th>
+										<th>Frequency 21-30 </th>
+										<th>Frequency 31-40 </th>
+										<th>Frequency 41-50 </th>
+										<th>Frequency 51-60 </th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for i in range(1, 11) %}
+									<tr>
+										<td><input type="number" id="extFreq{{i}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+										<td><input type="number" id="extFreq{{i + 10}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+										<td><input type="number" id="extFreq{{i + 20}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+										<td><input type="number" id="extFreq{{i + 30}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+										<td><input type="number" id="extFreq{{i + 40}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+										<td><input type="number" id="extFreq{{i + 50}}" min="62" max="32000" step="0.000001" placeholder="MHz"></td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						<div class="button-container">
+							<button id="startExternalTrigger">Start</button>
+							<button id="stopExternalTrigger">Stop</button>
+						</div>
+					</div>
+
+					<div class="section" id="pwmdiv" style="display:none;">
+						<div class="input-group">
+							<label for="pwmFrequency">RF Output Frequency (MHz)</label>
+							<input type="number" id="pwmFrequency" min="62" max="32000" step="0.000001" placeholder="MHz">
+						</div>
+						<br><br/>
+						<div class="input-group">
+							<label for="pwmMode">PWM Mode</label>
+							<select id="pwmMode">
+								<option value="duty">Duty Cycle (%)</option>
+								<option value="prt">Pulse Repetition Time</option>
+							</select>
+						</div>
+						<br><br/>
+						<div class="input-group" id="dutyCycleGroup">
+							<label for="pwmDutyCycle">Duty Cycle (%)</label>
+							<input type="number" id="pwmDutyCycle" min="0" max="100" step="1" placeholder="50">
+							<label for="pwmFrequencyRate">PRF (Hz)</label>
+							<input type="number" id="pwmFrequencyRate" min="1" step="1" placeholder="1000">
+						</div>
+                                                
+						<div class="input-group" id="prtGroup" style="display:none;">
+							<label for="pwmPRT">PRT (µs)</label>
+							<input type="number" id="pwmPRT" min="1" placeholder="1000">
+							<label for="pwmPulseWidth">Pulse Width (µs)</label>
+							<input type="number" id="pwmPulseWidth" min="1" placeholder="500">
+						</div>
+					</div>
+					
+
+					<!-- Other Parameters Section 1 -->
+					<div>
+						<div id="otherparamsdiv">
+
+							<div class="genericdiv">
+				
+
+						  <div>
+						<div id="otherparamsdiv">                     												    
+							<div class="genericdiv">
+							<!-- Charge pump current settings -->
+								<div class="section charge-pump-container">
+
+									<div class="input-group-select charge-pump-group">
+										<label for="chargePump">Charge Pump Current (mA)</label>
+										<select id="chargePump">
+											<option value="0.35" {% if config.get('chargePump', '1.75') == '0.35' %}selected{% endif %}>0.35</option>
+											<option value="0.70" {% if config.get('chargePump', '1.75') == '0.70' %}selected{% endif %}>0.70</option>
+											<option value="1.05" {% if config.get('chargePump', '1.75') == '1.05' %}selected{% endif %}>1.05</option>
+											<option value="1.40" {% if config.get('chargePump', '1.75') == '1.40' %}selected{% endif %}>1.40</option>
+											<option value="1.75" {% if config.get('chargePump', '1.75') == '1.75' %}selected{% endif %}>1.75</option>
+											<option value="2.10" {% if config.get('chargePump', '1.75') == '2.10' %}selected{% endif %}>2.10</option>
+											<option value="2.45" {% if config.get('chargePump', '1.75') == '2.45' %}selected{% endif %}>2.45</option>
+											<option value="2.80" {% if config.get('chargePump', '1.75') == '2.80' %}selected{% endif %}>2.80</option>
+											<option value="3.15" {% if config.get('chargePump', '1.75') == '3.15' %}selected{% endif %}>3.15</option>
+											<option value="3.50" {% if config.get('chargePump', '1.75') == '3.50' %}selected{% endif %}>3.50</option>
+											<option value="3.85" {% if config.get('chargePump', '1.75') == '3.85' %}selected{% endif %}>3.85</option>
+											<option value="4.20" {% if config.get('chargePump', '1.75') == '4.20' %}selected{% endif %}>4.20</option>
+											<option value="4.55" {% if config.get('chargePump', '1.75') == '4.55' %}selected{% endif %}>4.55</option>
+											<option value="4.90" {% if config.get('chargePump', '1.75') == '4.90' %}selected{% endif %}>4.90</option>
+											<option value="5.25" {% if config.get('chargePump', '1.75') == '5.25' %}selected{% endif %}>5.25</option>
+											<option value="5.60" {% if config.get('chargePump', '1.75') == '5.60' %}selected{% endif %}>5.60</option>
+										</select>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+					   <!-- RF ON/OFF Toggle -->
+
+				</div>
+					<br>
+					<div id="rfToggleContainer" class="rf-toggle-container">
+						<input type="checkbox" id="toggle" class="toggleCheckbox" {% if config.get('rfStatus', False) %}checked{% endif %}/>
+						<label for="toggle" class='toggleContainer'>
+							<div>RF ON</div>
+							<div>RF OFF</div>
+						</label>
+					</div>
+				</div>
+
+															 <!-- Right Panel -->
+
+				<div class="right-panel">
+					<div class="status">
+						<div class="indicator">
+							<span>Power</span>
+							<div class="hwdetect-circle"></div>
+						</div>
+						<div class="indicator">
+							<span>REF Frequency</span>
+							<div id="refFrequency">{{ config['refFrequency'] }}</div>
+						</div>
+						<div class="indicator">
+							<span>REF Doubler</span>
+							<div class="doubler-circle" id="doublerIndicator"></div>
+						</div>
+						<div class="indicator">
+							<span>REF Divider</span>
+							<div class="divider-circle" id="dividerIndicator"></div>
+						</div>
+						<div class="indicator">
+							<span>Temp(°C)</span>
+							<div id="temperature">Loading...</div>
+						</div>
+						<div class="indicator">
+							<span>Lock</span>
+							<div class="lock-circle"></div>
+						</div>
+					</div>
+					
+
+
+		
+
+
+					<!-- Attenuator Section -->
+					<div class="section attenuator-container">
+						<label class="section-heading">Digital Step Attenuator</label>
+						<div class="input-group">
+        					<label>Current Attenuation:</label>
+        					<span id="currentAttenuation">Loading...</span><span> dB</span> <!-- Display Box -->
+						</div>
+
+						<div class="input-group">
+							<label for="attenuation">Enter Attenuation</label>
+							<input type="number" id="attenuation" name="attenuation" min="0" max="31" step="0.5" placeholder="0.5">
+							<span>dB</span>
+							<button id="setAttenuation">Set</button>
+							<button id="maxAttenuation">Max ATT</button>
+							<button id="clearAttenuation">OFF</button>
+						</div>
+					</div>
+
+					<!-- Phase Shifter Section -->
+					<div class="section phase-shifter-container">
+						<label class="section-heading">Phase Shifter</label>
+						<div class="input-group">
+							<label for="phase">Phase</label>
+							<input type="number" id="phase" name="phase" min="0.00002" max="360" step="0.00001" placeholder="0.00002">
+							<span>deg</span>
+							<button id="setPhase">Set</button>
+
+						</div>
+						<div class="input-group">
+							<label for="time">Time</label>
+							<input type="number" id="time" name="time" placeholder="0.00">
+							<select id="timeUnit">
+								<option value="ms">ms</option>
+								<option value="us">&micro;s</option>
+								<option value="ns">ns</option>
+								<option value="ps">ps</option>
+								<option value="fs">fs</option>
+							</select>
+						    <button id="setTime">Set</button>
+						</div>
+					</div>
+
+					<!-- Network Configuration Section -->
+					<div class="section">
+					    <label class="section-heading">Network Configuration</label>
+
+					    <div class="input-group">
+						<label for="ipMode">IP Mode</label>
+						<select id="ipMode">
+						    <option value="dhcp">Dynamic (DHCP)</option>
+						    <option value="static">Static</option>
+						</select>
+					    </div>
+					    
+					    <div class="input-group">
+						<label for="staticIP">Static IP Address</label>
+						<input type="text" id="staticIP" disabled>
+					    </div>
+					    
+					    <div class="input-group">
+						<button id="applyNetwork">Apply</button>
+					    </div>
+					</div>
+
+					<div class="message">
+						<label for="message">Message</label>
+						<pre id="messagebox"></pre>
+					</div>
+				</div>
+			</div>
+		</div> 
+		
+<!-- Script -->
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 </body>
 </html>
+
+
+
+
